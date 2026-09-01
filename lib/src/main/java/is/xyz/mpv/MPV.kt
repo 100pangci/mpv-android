@@ -446,10 +446,13 @@ class MPV(
             systemLibraryLoaded = true
         }
         nativeCreate(context)
-        nativeInit()
-        initSession()
+        // config-dir must be set before mpv_initialize: the config and
+        // input.conf files are read during initialization (mpv-android
+        // <= 0.1.12 did the same in BaseMPVView.initialize)
         setConfigDir(configDir)
         setCacheDir(cacheDir)
+        nativeInit()
+        initSession()
         setOptionString("idle", "once")
         setPropertyBoolean("pause", true)
     }
