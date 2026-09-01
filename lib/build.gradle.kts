@@ -11,7 +11,7 @@ val abiCodes = mapOf("armeabi-v7a" to 1, "arm64-v8a" to 2, "x86" to 3, "x86_64" 
 val universalBase = 8000
 
 version = "0.1.13"
-group = "io.github.abdallahmehiz"
+group = "io.github.100pangci"
 
 android {
     namespace = "is.xyz.mpv"
@@ -54,7 +54,7 @@ mavenPublishing {
         name.set("mpv Android library")
         description.set("The mpv library used by mpvKt.")
         inceptionYear.set("2024")
-        url.set("https://github.com/abdallahmehiz/mpv-android/")
+        url.set("https://github.com/100pangci/mpv-android/")
         licenses {
             license {
                 name.set("MIT License")
@@ -64,15 +64,15 @@ mavenPublishing {
         }
         developers {
             developer {
-                id.set("abdallahmehiz")
-                name.set("Abdallah Mehiz")
-                url.set("https://github.com/abdallahmehiz/")
+                id.set("100pangci")
+                name.set("100pangci")
+                url.set("https://github.com/100pangci/")
             }
         }
         scm {
-            url.set("https://github.com/abdallahmehiz/mpv-android/")
-            connection.set("scm:git:git://github.com/abdallahmehiz/mpv-android.git")
-            developerConnection.set("scm:git:ssh://git@github.com/abdallahmehiz/mpv-android.git")
+            url.set("https://github.com/100pangci/mpv-android/")
+            connection.set("scm:git:git://github.com/100pangci/mpv-android.git")
+            developerConnection.set("scm:git:ssh://git@github.com/100pangci/mpv-android.git")
         }
     }
 }

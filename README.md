@@ -1,16 +1,18 @@
 # mpv-android-lib
 
-[![Build Status](https://github.com/abdallahmehiz/mpv-android/actions/workflows/build.yml/badge.svg?branch=master)](https://github.com/abdallahmehiz/mpv-android/actions/workflows/build.yml)
-[![Maven Central](https://img.shields.io/maven-central/v/io.github.abdallahmehiz/mpv-android-lib.svg)](https://central.sonatype.com/artifact/io.github.abdallahmehiz/mpv-android-lib)
+[![Build Status](https://github.com/100pangci/mpv-android/actions/workflows/build.yml/badge.svg?branch=library)](https://github.com/100pangci/mpv-android/actions/workflows/build.yml)
+[![Maven Central](https://img.shields.io/maven-central/v/io.github.100pangci/mpv-android-lib.svg)](https://central.sonatype.com/artifact/io.github.100pangci/mpv-android-lib)
 
 A library version of [mpv-android](https://github.com/mpv-android/mpv-android), providing [libmpv](https://github.com/mpv-player/mpv) for Android applications.
-Initially made for [mpvKt](https://github.com/abdallahmehiz/mpvKt).
+Initially made for [mpvKt](https://github.com/abdallahmehiz/mpvKt) by [@abdallahmehiz](https://github.com/abdallahmehiz/);
+this fork is maintained by [mpvKt](https://github.com/100pangci/mpvKt) and aligned with the
+upstream [mpv-android](https://github.com/mpv-android/mpv-android) master buildscripts.
 
 ## "New" Features
 
 * **Multiple MPV instances**
 * **`mpv_node` support**
-* **DASH support** 
+* **DASH support**
 
 ## Installation
 
@@ -18,7 +20,7 @@ Add the dependency to your `build.gradle`:
 
 ```groovy
 dependencies {
-    implementation "io.github.abdallahmehiz:mpv-android-lib:<version>"
+    implementation "io.github.100pangci:mpv-android-lib:<version>"
 }
 ```
 
@@ -26,37 +28,26 @@ dependencies {
 
 ### Using BaseMPVView
 
-The simplest way to extend `BaseMPVView`:
+`BaseMPVView` is a plain `SurfaceView` shell that attaches/detaches the
+video surface. Create the `MPV` instance yourself and hand it to the view:
 
 ```kotlin
-class MyPlayerView(context: Context, attrs: AttributeSet?) : BaseMPVView(context, attrs) {
-
-    override fun initOptions() {
-        // Set options before mpv.init() is called
-        mpv.setOptionString("hwdec", "auto")
-    }
-
-    override fun postInitOptions() {
-        // Set options after mpv.init() is called
-        mpv.setOptionString("sub-auto", "fuzzy")
-    }
-}
+class MyPlayerView(context: Context, attrs: AttributeSet?) : BaseMPVView(context, attrs)
 
 val playerView = MyPlayerView(context, null)
-playerView.initialize(configDir = filesDir.path, cacheDir = cacheDir.path)
-playerView.playFile("/path/to/video.mp4")
+playerView.mpv = MPV(
+    context,
+    configDir = filesDir.path, // mpv.conf/input.conf are read from here
+    cacheDir = cacheDir.path,
+)
 ```
 
 ### Using MPV() Directly
 
-You can also use `MPV()` then attach to fully control your mpv instance.
+The `MPV` constructor creates and initializes libmpv in one go:
 
 ```kotlin
-val mpv = MPV()
-
-mpv.create(context)
-mpv.setOptionString("config", "yes")
-mpv.init()
+val mpv = MPV(context, configDir = filesDir.path, cacheDir = cacheDir.path)
 
 // Attach to a view surface
 mpv.attachSurface(surface)
@@ -77,19 +68,16 @@ val pauseState: StateFlow<Boolean?> = mpv.propFlow["pause"]
 
 // cleanup
 mpv.detachSurface()
-mpv.destroy()
+mpv.close()
 ```
 
 ### Multiple Instances
 
-Each `MPV()` or `BaseMPVView` instance is independent:
+Each `MPV` instance is independent:
 
 ```kotlin
-val player1 = MPV()
-val player2 = MPV()
-
-player1.create(context)
-player2.create(context)
+val player1 = MPV(context)
+val player2 = MPV(context)
 
 // Each player can play different content simultaneously
 ```
