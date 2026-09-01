@@ -10,13 +10,14 @@ plugins {
 val abiCodes = mapOf("armeabi-v7a" to 1, "arm64-v8a" to 2, "x86" to 3, "x86_64" to 4)
 val universalBase = 8000
 
-version = "0.1.12"
+version = "0.1.13"
 group = "io.github.abdallahmehiz"
 
 android {
     namespace = "is.xyz.mpv"
     compileSdk = 36
-    defaultConfig { minSdk = 21 }
+    // must stay in sync with the API level used by buildscripts (loadarch in buildall.sh)
+    defaultConfig { minSdk = 23 }
 
     buildFeatures {
         buildConfig = true

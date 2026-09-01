@@ -40,8 +40,11 @@ static void prepare_environment(JNIEnv *env, jobject appctx) {
 
     setlocale(LC_NUMERIC, "C");
 
-    if (!env->GetJavaVM(&g_vm) && g_vm)
-        av_jni_set_java_vm(g_vm, NULL);
+    g_vm = NULL;
+    env->GetJavaVM(&g_vm);
+    if (!g_vm)
+        die("failed to get jvm");
+    av_jni_set_java_vm(g_vm, NULL);
 
     jobject global_appctx = env->NewGlobalRef(appctx);
     if (global_appctx)

@@ -14,27 +14,18 @@ if [ ! -d mbedtls ]; then
 		tar -xj -C mbedtls --strip-components=1
 fi
 
-# libxml2
-if [ ! -d libxml2 ]; then
-	mkdir libxml2
-	$WGET https://gitlab.gnome.org/GNOME/libxml2/-/archive/v$v_libxml2/libxml2-v$v_libxml2.tar.gz -O - | \
-		tar -xz -C libxml2 --strip-components=1
-fi
-
 # dav1d
-[ ! -d dav1d ] && git clone --depth 1 https://github.com/videolan/dav1d
+[ ! -d dav1d ] && git clone https://github.com/videolan/dav1d
 
 # ffmpeg
 if [ ! -d ffmpeg ]; then
-    if [ $IN_CI -eq 1 ]; then
-        git clone --branch $v_ci_ffmpeg --depth 1 https://github.com/FFmpeg/FFmpeg ffmpeg
-    else
-        git clone --depth 1 https://github.com/FFmpeg/FFmpeg ffmpeg
-    fi
+	args=()
+	[ $IN_CI -eq 1 ] && args+=(--depth=1 -b "$v_ci_ffmpeg")
+	git clone https://github.com/FFmpeg/FFmpeg ffmpeg "${args[@]}"
 fi
 
 # freetype2
-[ ! -d freetype2 ] && git clone --depth 1 --recurse-submodules https://gitlab.freedesktop.org/freetype/freetype.git freetype2 -b VER-${v_freetype//./-}
+[ ! -d freetype2 ] && git clone --recurse-submodules https://gitlab.freedesktop.org/freetype/freetype.git freetype2 -b VER-${v_freetype//./-}
 
 # fribidi
 if [ ! -d fribidi ]; then
@@ -57,8 +48,22 @@ if [ ! -d unibreak ]; then
 		tar -xz -C unibreak --strip-components=1
 fi
 
+# libxml2
+if [ ! -d libxml2 ]; then
+	mkdir libxml2
+	$WGET https://gitlab.gnome.org/GNOME/libxml2/-/archive/v${v_libxml2}/libxml2-v${v_libxml2}.tar.gz -O - | \
+		tar -xz -C libxml2 --strip-components=1
+fi
+
+# fontconfig
+if [ ! -d fontconfig ]; then
+	mkdir fontconfig
+	$WGET https://gitlab.freedesktop.org/fontconfig/fontconfig/-/archive/${v_fontconfig}/fontconfig-${v_fontconfig}.tar.gz -O - | \
+		tar -xz -C fontconfig --strip-components=1
+fi
+
 # libass
-[ ! -d libass ] && git clone --depth 1 https://github.com/libass/libass
+[ ! -d libass ] && git clone https://github.com/libass/libass
 
 # lua
 if [ ! -d lua ]; then
@@ -68,9 +73,16 @@ if [ ! -d lua ]; then
 fi
 
 # libplacebo
-[ ! -d libplacebo ] && git clone --depth 1 --recursive https://github.com/haasn/libplacebo
+[ ! -d libplacebo ] && git clone --recursive https://github.com/haasn/libplacebo
+
+# curl
+if [ ! -d curl ]; then
+	mkdir curl
+	$WGET https://curl.se/download/curl-$v_curl.tar.gz -O - | \
+		tar -xz -C curl --strip-components=1
+fi
 
 # mpv
-[ ! -d mpv ] && git clone --depth 1 https://github.com/mpv-player/mpv
+[ ! -d mpv ] && git clone https://github.com/mpv-player/mpv
 
 cd ..
