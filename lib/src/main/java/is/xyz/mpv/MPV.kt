@@ -445,7 +445,8 @@ class MPV(
             System.loadLibrary("player")
             systemLibraryLoaded = true
         }
-        nativeCreate(context)
+        // FFmpeg retains the Android context globally; don't let an Activity leak.
+        nativeCreate(context.applicationContext)
         // config-dir must be set before mpv_initialize: the config and
         // input.conf files are read during initialization (mpv-android
         // <= 0.1.12 did the same in BaseMPVView.initialize)

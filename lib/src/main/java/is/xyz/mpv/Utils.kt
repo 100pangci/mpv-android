@@ -90,12 +90,15 @@ object Utils {
 
     fun copyAssets(context: Context) {
         val assetManager = context.assets
-        val files = arrayOf("subfont.ttf", "cacert.pem")
+        val files = arrayOf("cacert.pem")
         val configDir = context.filesDir.path
 
         for (name in files) {
             copyAssetFile(assetManager, name, File("$configDir/$name"))
         }
+
+        // Remove the old copied fallback; keep the AAR asset for consumers that load it directly.
+        File("$configDir/subfont.ttf").delete()
 
         writeFontsConf(context, File("$configDir/fonts.conf"))
     }
@@ -314,14 +317,18 @@ object Utils {
      * (if using an action bar).
      */
     fun handleInsetsAsPadding(view: View) {
-        val orig = listOf(view.paddingLeft, view.paddingTop, view.paddingRight, view.paddingBottom)
+        data class Padding(val left: Int, val top: Int, val right: Int, val bottom: Int)
+        var originalPadding: Padding? = null
         ViewCompat.setOnApplyWindowInsetsListener(view) { _, insets ->
             val i = insets.getInsets(WindowInsetsCompat.Type.systemBars())
+            val orig = originalPadding
+                ?: Padding(view.paddingLeft, view.paddingTop, view.paddingRight, view.paddingBottom)
+                    .also { originalPadding = it }
             view.setPadding(
-                orig[0] + i.left,
-                orig[1] + i.top,
-                orig[2] + i.right,
-                orig[3] + i.bottom
+                orig.left + i.left,
+                orig.top + i.top,
+                orig.right + i.right,
+                orig.bottom + i.bottom
             )
             insets
         }
@@ -333,7 +340,7 @@ object Utils {
     // FFmpeg/mpv could possibly read
     val MEDIA_EXTENSIONS = setOf(
             /* Playlist */
-            "cue", "m3u", "m3u8", "pls", "vlc",
+            "cue", "m3u", "m3u8", "pls", "strm", "vlc",
 
             /* Audio */
             "3ga", "3ga2", "a52", "aac", "ac3", "ac4", "adt", "adts", "aif", "aifc", "aiff", "alac",
